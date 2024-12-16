@@ -1,11 +1,11 @@
 # RegexVM
 
-Only anchored search, that is, the string must match from start to end.
-No backreferencing possible.
-Limited to 512 backtracking frames.
-Limited to block gas limit.
-Other than that fully featured pattern matching VM.
-TODO: Write a regex compiler to compile to the below instruction set.
+* Only anchored search, that is, the string must match from start to end.
+* No backreferencing possible.
+* Limited to 512 backtracking frames.
+* Limited to block gas limit.
+* Other than that fully featured pattern matching VM.
+* TODO: Write a regex compiler to compile to the below instruction set.
 
 ## Program structure
 
