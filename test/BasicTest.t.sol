@@ -198,4 +198,37 @@ contract BasicTest is Test {
         assertTrue(abi.decode(data, (bool)));
     }
 
+    function test_range_unicode(bytes2 char) public {
+        // all chinese chars
+        bytes memory program = RegexVmHelper.addStartEnd(abi.encodePacked(
+            Opcode.RANGE_UNICODE,
+            hex'4E00'
+            hex'9FFF'
+        ));
+
+        // clamp to the target range
+        // U+4E00..U+9FFF
+        char = bytes2(uint16(bound(uint16(char), 19968, 40959)));
+
+        (bool success, bytes memory data) = regexVM.staticcall(abi.encodePacked(program, char));
+        assertTrue(success);
+        assertTrue(abi.decode(data, (bool)));
+    }
+
+    function test_fail_range_unicode(bytes2 char) public {
+        // all chinese chars
+        bytes memory program = RegexVmHelper.addStartEnd(abi.encodePacked(
+            Opcode.RANGE_UNICODE,
+            hex'4E00'
+            hex'9FFF'
+        ));
+
+        // ignore correct range
+        // U+4E00..U+9FFF
+        vm.assume(uint16(char) > 40959 || uint16(char) < 19968);
+
+        (bool success, bytes memory data) = regexVM.staticcall(abi.encodePacked(program, char));
+        assertTrue(success);
+        assertFalse(abi.decode(data, (bool)));
+    }
 }

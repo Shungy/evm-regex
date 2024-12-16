@@ -1,13 +1,3 @@
-// Instructions are read from calldata (CD).
-// First 2 CD bytes must declare the length of the instruction bytes.
-// The last instruction byte must be the MATCH_END opcode.
-// The string must follow directly after the MATCH_END opcode.
-// There must be nothing else following the string bytes.
-// A progress opcode must not follow another one directly.
-// Matching is always anchored to the beginning and end, therefore there is no anchor opcodes.
-// Staticcalls to the contract should be made with gas limit.
-// 1024 stack size limits us to max 512 backtracking frames.
-
 #define macro  PAD1() = takes(0) returns (0) {         stop }
 #define macro  PAD2() = takes(0) returns (0) {  PAD1() stop }
 #define macro  PAD3() = takes(0) returns (0) {  PAD2() stop }
