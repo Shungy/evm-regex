@@ -1,0 +1,264 @@
+// Instructions are read from calldata (CD).
+// First 2 CD bytes must declare the length of the instruction bytes.
+// The last instruction byte must be the MATCH_END opcode.
+// The string must follow directly after the MATCH_END opcode.
+// There must be nothing else following the string bytes.
+// A progress opcode must not follow another one directly.
+// Matching is always anchored to the beginning and end, therefore there is no anchor opcodes.
+// Staticcalls to the contract should be made with gas limit.
+// 1024 stack size limits us to max 512 backtracking frames.
+
+#define macro  PAD1() = takes(0) returns (0) {         stop }
+#define macro  PAD2() = takes(0) returns (0) {  PAD1() stop }
+#define macro  PAD3() = takes(0) returns (0) {  PAD2() stop }
+#define macro  PAD4() = takes(0) returns (0) {  PAD3() stop }
+#define macro  PAD5() = takes(0) returns (0) {  PAD4() stop }
+#define macro  PAD6() = takes(0) returns (0) {  PAD5() stop }
+#define macro  PAD7() = takes(0) returns (0) {  PAD6() stop }
+#define macro  PAD8() = takes(0) returns (0) {  PAD7() stop }
+#define macro  PAD9() = takes(0) returns (0) {  PAD8() stop }
+#define macro PAD10() = takes(0) returns (0) {  PAD9() stop }
+#define macro PAD11() = takes(0) returns (0) { PAD10() stop }
+#define macro PAD12() = takes(0) returns (0) { PAD11() stop }
+#define macro PAD13() = takes(0) returns (0) { PAD12() stop }
+#define macro PAD14() = takes(0) returns (0) { PAD13() stop }
+#define macro PAD15() = takes(0) returns (0) { PAD14() stop }
+#define macro PAD16() = takes(0) returns (0) { PAD15() stop }
+#define macro PAD17() = takes(0) returns (0) { PAD16() stop }
+#define macro PAD18() = takes(0) returns (0) { PAD17() stop }
+#define macro PAD19() = takes(0) returns (0) { PAD18() stop }
+#define macro PAD20() = takes(0) returns (0) { PAD19() stop }
+#define macro PAD21() = takes(0) returns (0) { PAD20() stop }
+#define macro PAD22() = takes(0) returns (0) { PAD21() stop }
+#define macro PAD23() = takes(0) returns (0) { PAD22() stop }
+#define macro PAD24() = takes(0) returns (0) { PAD23() stop }
+#define macro PAD25() = takes(0) returns (0) { PAD24() stop }
+#define macro PAD26() = takes(0) returns (0) { PAD25() stop }
+#define macro PAD27() = takes(0) returns (0) { PAD26() stop }
+#define macro PAD28() = takes(0) returns (0) { PAD27() stop }
+#define macro PAD29() = takes(0) returns (0) { PAD28() stop }
+#define macro PAD30() = takes(0) returns (0) { PAD29() stop }
+#define macro PAD31() = takes(0) returns (0) { PAD30() stop }
+#define macro PAD32() = takes(0) returns (0) { PAD31() stop }
+#define macro PAD33() = takes(0) returns (0) { PAD32() stop }
+#define macro PAD34() = takes(0) returns (0) { PAD33() stop }
+#define macro PAD35() = takes(0) returns (0) { PAD34() stop }
+#define macro PAD36() = takes(0) returns (0) { PAD35() stop }
+#define macro PAD37() = takes(0) returns (0) { PAD36() stop }
+#define macro PAD38() = takes(0) returns (0) { PAD37() stop }
+#define macro PAD39() = takes(0) returns (0) { PAD38() stop }
+#define macro PAD40() = takes(0) returns (0) { PAD39() stop }
+#define macro PAD41() = takes(0) returns (0) { PAD40() stop }
+#define macro PAD42() = takes(0) returns (0) { PAD41() stop }
+#define macro PAD43() = takes(0) returns (0) { PAD42() stop }
+#define macro PAD44() = takes(0) returns (0) { PAD43() stop }
+
+#define macro  CD_BYTE1() = takes(1) returns (1) { calldataload 0xf8 shr }
+#define macro  CD_BYTE2() = takes(1) returns (1) { calldataload 0xf0 shr }
+#define macro  CD_BYTE3() = takes(1) returns (1) { calldataload 0xe8 shr }
+#define macro  CD_BYTE4() = takes(1) returns (1) { calldataload 0xe0 shr }
+#define macro  CD_BYTE5() = takes(1) returns (1) { calldataload 0xd8 shr }
+#define macro  CD_BYTE6() = takes(1) returns (1) { calldataload 0xd0 shr }
+#define macro  CD_BYTE7() = takes(1) returns (1) { calldataload 0xc8 shr }
+#define macro  CD_BYTE8() = takes(1) returns (1) { calldataload 0xc0 shr }
+#define macro  CD_BYTE9() = takes(1) returns (1) { calldataload 0xb8 shr }
+#define macro CD_BYTE10() = takes(1) returns (1) { calldataload 0xb0 shr }
+#define macro CD_BYTE11() = takes(1) returns (1) { calldataload 0xa8 shr }
+#define macro CD_BYTE12() = takes(1) returns (1) { calldataload 0xa0 shr }
+#define macro CD_BYTE13() = takes(1) returns (1) { calldataload 0x98 shr }
+#define macro CD_BYTE14() = takes(1) returns (1) { calldataload 0x90 shr }
+#define macro CD_BYTE15() = takes(1) returns (1) { calldataload 0x88 shr }
+#define macro CD_BYTE16() = takes(1) returns (1) { calldataload 0x80 shr }
+#define macro CD_BYTE17() = takes(1) returns (1) { calldataload 0x78 shr }
+#define macro CD_BYTE18() = takes(1) returns (1) { calldataload 0x70 shr }
+#define macro CD_BYTE19() = takes(1) returns (1) { calldataload 0x68 shr }
+#define macro CD_BYTE20() = takes(1) returns (1) { calldataload 0x60 shr }
+#define macro CD_BYTE21() = takes(1) returns (1) { calldataload 0x58 shr }
+#define macro CD_BYTE22() = takes(1) returns (1) { calldataload 0x50 shr }
+#define macro CD_BYTE23() = takes(1) returns (1) { calldataload 0x48 shr }
+#define macro CD_BYTE24() = takes(1) returns (1) { calldataload 0x40 shr }
+#define macro CD_BYTE25() = takes(1) returns (1) { calldataload 0x38 shr }
+#define macro CD_BYTE26() = takes(1) returns (1) { calldataload 0x30 shr }
+#define macro CD_BYTE27() = takes(1) returns (1) { calldataload 0x28 shr }
+#define macro CD_BYTE28() = takes(1) returns (1) { calldataload 0x20 shr }
+#define macro CD_BYTE29() = takes(1) returns (1) { calldataload 0x18 shr }
+#define macro CD_BYTE30() = takes(1) returns (1) { calldataload 0x10 shr }
+#define macro CD_BYTE31() = takes(1) returns (1) { calldataload 0x08 shr }
+#define macro CD_BYTE32() = takes(1) returns (1) { calldataload          }
+
+#define macro PC() = takes (0) returns (1) { returndatasize mload }
+#define macro SP() = takes(0) returns(1) { 0x20 mload }
+
+#define macro SET_PC() = takes(1) returns (0) { returndatasize mstore }
+#define macro SET_SP() = takes(1) returns (0) { 0x20 mstore }
+
+#define macro RETURN() = takes(1) returns (0) { returndatasize mstore 0x20 returndatasize return }
+
+#define macro MAIN() = takes (0) returns (0) {
+    returndatasize CD_BYTE2() // [ initial SP ]
+    SET_SP()                  // []
+    0x02                      // [ initial PC ]
+    SET_PC()                  // []
+    returndatasize            // [ stack end marker ]
+
+    continue:
+        calldatasize SP() gt // [ is string overconsumed ]
+        backtrack jumpi      // []
+        PC() CD_BYTE1()      // [ OP ]
+        0x37 mul CHAR1 add   // [ OP jumpdest ]
+        jump
+
+    no_match:
+        returndatasize RETURN()
+
+    match:
+        0x01 RETURN()
+
+    backtrack:
+        dup1 iszero       // [ is stack empty, [ frame PC, frame SP ] ]
+        no_match jumpi    // [ [frame PC, frame SP ] ]
+        SET_PC() SET_SP() // []
+        continue jump
+
+    CHAR1:
+        PC() 0x01 add CD_BYTE1()  // [ arg[1] ]
+        SP() CD_BYTE1()           // [ char[1], arg[1] ]
+        eq iszero backtrack jumpi // []
+        PC() 0x02 add SET_PC()
+        SP() 0x01 add SET_SP()
+        continue jump
+        PAD12()
+     CHAR2: PC() 0x01 add  CD_BYTE2() SP()  CD_BYTE2() eq iszero backtrack jumpi PC() 0x03 add SET_PC() SP() 0x02 add SET_SP() continue jump PAD12()
+     CHAR3: PC() 0x01 add  CD_BYTE3() SP()  CD_BYTE3() eq iszero backtrack jumpi PC() 0x04 add SET_PC() SP() 0x03 add SET_SP() continue jump PAD12()
+     CHAR4: PC() 0x01 add  CD_BYTE4() SP()  CD_BYTE4() eq iszero backtrack jumpi PC() 0x05 add SET_PC() SP() 0x04 add SET_SP() continue jump PAD12()
+     CHAR5: PC() 0x01 add  CD_BYTE5() SP()  CD_BYTE5() eq iszero backtrack jumpi PC() 0x06 add SET_PC() SP() 0x05 add SET_SP() continue jump PAD12()
+     CHAR6: PC() 0x01 add  CD_BYTE6() SP()  CD_BYTE6() eq iszero backtrack jumpi PC() 0x07 add SET_PC() SP() 0x06 add SET_SP() continue jump PAD12()
+     CHAR7: PC() 0x01 add  CD_BYTE7() SP()  CD_BYTE7() eq iszero backtrack jumpi PC() 0x08 add SET_PC() SP() 0x07 add SET_SP() continue jump PAD12()
+     CHAR8: PC() 0x01 add  CD_BYTE8() SP()  CD_BYTE8() eq iszero backtrack jumpi PC() 0x09 add SET_PC() SP() 0x08 add SET_SP() continue jump PAD12()
+     CHAR9: PC() 0x01 add  CD_BYTE9() SP()  CD_BYTE9() eq iszero backtrack jumpi PC() 0x0a add SET_PC() SP() 0x09 add SET_SP() continue jump PAD12()
+    CHAR10: PC() 0x01 add CD_BYTE10() SP() CD_BYTE10() eq iszero backtrack jumpi PC() 0x0b add SET_PC() SP() 0x0a add SET_SP() continue jump PAD12()
+    CHAR11: PC() 0x01 add CD_BYTE11() SP() CD_BYTE11() eq iszero backtrack jumpi PC() 0x0c add SET_PC() SP() 0x0b add SET_SP() continue jump PAD12()
+    CHAR12: PC() 0x01 add CD_BYTE12() SP() CD_BYTE12() eq iszero backtrack jumpi PC() 0x0d add SET_PC() SP() 0x0c add SET_SP() continue jump PAD12()
+    CHAR13: PC() 0x01 add CD_BYTE13() SP() CD_BYTE13() eq iszero backtrack jumpi PC() 0x0e add SET_PC() SP() 0x0d add SET_SP() continue jump PAD12()
+    CHAR14: PC() 0x01 add CD_BYTE14() SP() CD_BYTE14() eq iszero backtrack jumpi PC() 0x0f add SET_PC() SP() 0x0e add SET_SP() continue jump PAD12()
+    CHAR15: PC() 0x01 add CD_BYTE15() SP() CD_BYTE15() eq iszero backtrack jumpi PC() 0x10 add SET_PC() SP() 0x0f add SET_SP() continue jump PAD12()
+    CHAR16: PC() 0x01 add CD_BYTE16() SP() CD_BYTE16() eq iszero backtrack jumpi PC() 0x11 add SET_PC() SP() 0x10 add SET_SP() continue jump PAD12()
+    CHAR17: PC() 0x01 add CD_BYTE17() SP() CD_BYTE17() eq iszero backtrack jumpi PC() 0x12 add SET_PC() SP() 0x11 add SET_SP() continue jump PAD12()
+    CHAR18: PC() 0x01 add CD_BYTE18() SP() CD_BYTE18() eq iszero backtrack jumpi PC() 0x13 add SET_PC() SP() 0x12 add SET_SP() continue jump PAD12()
+    CHAR19: PC() 0x01 add CD_BYTE19() SP() CD_BYTE19() eq iszero backtrack jumpi PC() 0x14 add SET_PC() SP() 0x13 add SET_SP() continue jump PAD12()
+    CHAR20: PC() 0x01 add CD_BYTE20() SP() CD_BYTE20() eq iszero backtrack jumpi PC() 0x15 add SET_PC() SP() 0x14 add SET_SP() continue jump PAD12()
+    CHAR21: PC() 0x01 add CD_BYTE21() SP() CD_BYTE21() eq iszero backtrack jumpi PC() 0x16 add SET_PC() SP() 0x15 add SET_SP() continue jump PAD12()
+    CHAR22: PC() 0x01 add CD_BYTE22() SP() CD_BYTE22() eq iszero backtrack jumpi PC() 0x17 add SET_PC() SP() 0x16 add SET_SP() continue jump PAD12()
+    CHAR23: PC() 0x01 add CD_BYTE23() SP() CD_BYTE23() eq iszero backtrack jumpi PC() 0x18 add SET_PC() SP() 0x17 add SET_SP() continue jump PAD12()
+    CHAR24: PC() 0x01 add CD_BYTE24() SP() CD_BYTE24() eq iszero backtrack jumpi PC() 0x19 add SET_PC() SP() 0x18 add SET_SP() continue jump PAD12()
+    CHAR25: PC() 0x01 add CD_BYTE25() SP() CD_BYTE25() eq iszero backtrack jumpi PC() 0x1a add SET_PC() SP() 0x19 add SET_SP() continue jump PAD12()
+    CHAR26: PC() 0x01 add CD_BYTE26() SP() CD_BYTE26() eq iszero backtrack jumpi PC() 0x1b add SET_PC() SP() 0x1a add SET_SP() continue jump PAD12()
+    CHAR27: PC() 0x01 add CD_BYTE27() SP() CD_BYTE27() eq iszero backtrack jumpi PC() 0x1c add SET_PC() SP() 0x1b add SET_SP() continue jump PAD12()
+    CHAR28: PC() 0x01 add CD_BYTE28() SP() CD_BYTE28() eq iszero backtrack jumpi PC() 0x1d add SET_PC() SP() 0x1c add SET_SP() continue jump PAD12()
+    CHAR29: PC() 0x01 add CD_BYTE29() SP() CD_BYTE29() eq iszero backtrack jumpi PC() 0x1e add SET_PC() SP() 0x1d add SET_SP() continue jump PAD12()
+    CHAR30: PC() 0x01 add CD_BYTE30() SP() CD_BYTE30() eq iszero backtrack jumpi PC() 0x1f add SET_PC() SP() 0x1e add SET_SP() continue jump PAD12()
+    CHAR31: PC() 0x01 add CD_BYTE31() SP() CD_BYTE31() eq iszero backtrack jumpi PC() 0x20 add SET_PC() SP() 0x1f add SET_SP() continue jump PAD12()
+    CHAR32: PC() 0x01 add CD_BYTE32() SP() CD_BYTE32() eq iszero backtrack jumpi PC() 0x21 add SET_PC() SP() 0x20 add SET_SP() continue jump PAD18()
+
+    BITMAP16:
+        0x01 SP() CD_BYTE1()       // [ char[1], 1 ]
+        shl                        // [ char bitpos ]
+        PC() 0x01 add CD_BYTE16()  // [ arg[16], char bitpos ]
+        and iszero backtrack jumpi // []
+        PC() 0x11 add SET_PC()
+        SP() 0x01 add SET_SP()
+        continue jump
+        PAD9()
+
+    BITMAP32:
+        0x01 SP() CD_BYTE1()
+        shl
+        PC() 0x01 add CD_BYTE32()
+        and iszero backtrack jumpi
+        PC() 0x21 add SET_PC()
+        SP() 0x01 add SET_SP()
+        continue jump
+        PAD12()
+
+    ANY:
+        PC() 0x01 add SET_PC()
+        SP() 0x01 add SET_SP()
+        continue jump
+        PAD34()
+
+    RANGE_ASCII:
+        SP() CD_BYTE1() dup1      // [ char, char ]
+        PC() 0x01 add CD_BYTE1()  // [ from, char, char ]
+        gt                        // [ from > char, char ]
+        swap1                     // [ char, from > char ]
+        PC() 0x02 add CD_BYTE1()  // [ to, char, from > char ]
+        lt                        // [ to < char, from > char ]
+        or backtrack jumpi
+
+        PC() 0x03 add SET_PC()
+        SP() 0x01 add SET_SP()
+        continue jump
+
+    RANGE_UNICODE:
+        SP() CD_BYTE2() dup1
+        PC() 0x01 add CD_BYTE2()
+        gt
+        swap1
+        PC() 0x03 add CD_BYTE2()
+        lt
+        or backtrack jumpi
+
+        PC() 0x05 add SET_PC()
+        SP() 0x02 add SET_SP()
+        continue jump
+
+    JUMP1:
+        PC() 0x01 add CD_BYTE1() // [ arg[1] ]
+        SET_PC()                 // []
+        continue jump
+        PAD39()
+
+    JUMP2:
+        PC() 0x01 add CD_BYTE2()
+        SET_PC()
+        continue jump
+        PAD39()
+
+    SPLIT1:
+        SP()                     // [ frame SP ]
+        PC() 0x01 add CD_BYTE1() // [ frame PC, frame SP ]
+        PC() 0x02 add            // [ next PC, frame PC, frame SP ]
+        SET_PC()                 // [ frame PC, frame SP ]
+        dup1 continue jumpi      // [ frame PC, frame SP ]
+        invalid                  // Revert if new frame PC is zero.
+        PAD29()
+
+    SPLIT2:
+        SP()
+        PC() 0x01 add CD_BYTE2()
+        PC() 0x03 add
+        SET_PC()
+        dup1 continue jumpi
+        invalid
+        PAD29()
+
+    PROGRESS:
+        PC() 0x22 add mload 0xffff and
+        SP() eq backtrack jumpi
+
+        PC() 0x22 add dup1
+        mload 0x10 shr 0x10 shl
+        SP() or
+        swap1 mstore
+
+        // Increment program counter.
+        PC() 0x01 add SET_PC()
+
+        continue jump
+
+        PAD6()
+
+    MATCH_END:
+        SP() calldatasize eq match jumpi
+        backtrack jump
+}
