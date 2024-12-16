@@ -1,3 +1,5 @@
+// License: GPLv3
+
 #define macro  PAD1() = takes(0) returns (0) {         stop }
 #define macro  PAD2() = takes(0) returns (0) {  PAD1() stop }
 #define macro  PAD3() = takes(0) returns (0) {  PAD2() stop }
