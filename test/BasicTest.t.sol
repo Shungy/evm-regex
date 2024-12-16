@@ -121,14 +121,14 @@ contract BasicTest is Test {
                 "employ",
 
                 Opcode.SPLIT1,
-                hex'0c', // to second split' // 0x0b
+                hex'0c', // to second split'
 
                 Opcode.MATCH_END,
 
                 Opcode.SPLIT1
             ),
             abi.encodePacked(
-                hex'12', // to ee
+                hex'12', // to next split
 
                 Opcode.CHAR2,
                 "er",
@@ -136,7 +136,7 @@ contract BasicTest is Test {
                 Opcode.MATCH_END,
 
                 Opcode.SPLIT1,
-                hex'18', // to ment
+                hex'18', // to next split
 
                 Opcode.CHAR2,
                 "ee",
@@ -145,7 +145,7 @@ contract BasicTest is Test {
             ),
             abi.encodePacked(
                 Opcode.SPLIT1,
-                hex'20', // to ing
+                hex'20', // to next split
 
                 Opcode.CHAR4,
                 "ment",
@@ -153,7 +153,7 @@ contract BasicTest is Test {
                 Opcode.MATCH_END,
 
                 Opcode.SPLIT1,
-                hex'27', // to able
+                hex'27', // to CHAR4:'able'
 
                 Opcode.CHAR3,
                 "ing",
